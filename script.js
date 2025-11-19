@@ -15,6 +15,9 @@ function logout() {
 const LS_KEY = 'inventarisTKJ';
 let data = JSON.parse(localStorage.getItem(LS_KEY)) || [];
 
+// key untuk menyimpan riwayat peminjaman
+const HISTORY_KEY = 'loanHistory';
+
 // simpan ke localStorage
 function simpanLocal() {
   localStorage.setItem(LS_KEY, JSON.stringify(data));
@@ -59,6 +62,7 @@ function tampilkanData() {
           <button class="aksi-btn hapus" onclick="hapusData(${index})">Hapus</button>
           <button class="aksi-btn notif" onclick="triggerNotifPinjam(${index})">Notif Pinjam</button>
           <button class="aksi-btn notif" onclick="triggerNotifRusak(${index})">Notif Rusak</button>
+          ${item.status === 'Dipinjam' ? `<button class="aksi-btn" onclick="kembalikanData(${index})">Kembalikan</button>` : ''}
         </td>
       </tr>
     `;
@@ -168,6 +172,17 @@ function triggerNotifPinjam(index) {
   } else {
     alert('Fungsi notifikasi tidak tersedia.');
   }
+
+  // catat riwayat peminjaman
+  try {
+    if (typeof window.addHistory === 'function') {
+      window.addHistory({ type: 'pinjam', nama: item.nama, kode: item.kode, peminjam, waktu: new Date().toISOString() });
+    } else {
+      const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      h.push({ type: 'pinjam', nama: item.nama, kode: item.kode, peminjam, waktu: new Date().toISOString() });
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
+    }
+  } catch (e) { console.warn('Gagal menyimpan riwayat pinjam', e); }
 }
 
 function triggerNotifRusak(index) {
@@ -183,6 +198,44 @@ function triggerNotifRusak(index) {
   } else {
     alert('Fungsi notifikasi tidak tersedia.');
   }
+
+  // catat riwayat kerusakan
+  try {
+    if (typeof window.addHistory === 'function') {
+      window.addHistory({ type: 'rusak', nama: item.nama, kode: item.kode, keterangan, waktu: new Date().toISOString() });
+    } else {
+      const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      h.push({ type: 'rusak', nama: item.nama, kode: item.kode, keterangan, waktu: new Date().toISOString() });
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
+    }
+  } catch (e) { console.warn('Gagal menyimpan riwayat rusak', e); }
+}
+
+// kembalikan barang yang sedang dipinjam
+function kembalikanData(index) {
+  if (!confirm('Kembalikan barang ini?')) return;
+  const item = data[index];
+  // ubah status menjadi Baik saat dikembalikan
+  const prevPeminjam = null;
+  item.status = 'Baik';
+  simpanLocal();
+  tampilkanData();
+
+  // kirim notifikasi kembali (opsional jika tersedia)
+  if (typeof window.notifKembali === 'function') {
+    window.notifKembali(item.nama, item.kode);
+  }
+
+  // catat riwayat pengembalian
+  try {
+    if (typeof window.addHistory === 'function') {
+      window.addHistory({ type: 'kembali', nama: item.nama, kode: item.kode, waktu: new Date().toISOString() });
+    } else {
+      const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      h.push({ type: 'kembali', nama: item.nama, kode: item.kode, waktu: new Date().toISOString() });
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
+    }
+  } catch (e) { console.warn('Gagal menyimpan riwayat kembali', e); }
 }
 
 /* ---------- KONFIRMASI PINJAM BERDASARKAN KODE (untuk scanner) ---------- */

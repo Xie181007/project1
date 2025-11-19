@@ -3,30 +3,280 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login Admin - Inventaris TKJ</title>
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Reset dan base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f1419, #1a2332);
+      color: #e0e0e0;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Background animasi jaringan komputer TKJ yang rame dan full (versi sebelum) */
+    .tkj-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .tkj-bg svg {
+      width: 95%;
+      height: 95%;
+      max-width: 1000px;
+    }
+    .tkj-bg .node {
+      fill: #00d4ff;
+      stroke: #007bff;
+      stroke-width: 2;
+      filter: drop-shadow(0 0 15px #00d4ff);
+      animation: blinkRandom 1s infinite alternate;
+    }
+    .tkj-bg .connection {
+      stroke: #00d4ff;
+      stroke-width: 4;
+      fill: none;
+      stroke-dasharray: 15 8;
+      animation: dataFlow 1.5s linear infinite;
+    }
+    .tkj-bg .data-particle {
+      fill: #ff6b6b;
+      r: 4;
+      filter: drop-shadow(0 0 5px #ff6b6b);
+      animation: moveParticle 3s linear infinite;
+    }
+    @keyframes blinkRandom {
+      0% { opacity: 0.5; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0.7; transform: scale(1); }
+    }
+    @keyframes dataFlow {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -23; }
+    }
+    @keyframes moveParticle {
+      0% { cx: 100; cy: 200; }
+      12.5% { cx: 250; cy: 150; }
+      25% { cx: 400; cy: 100; }
+      37.5% { cx: 550; cy: 150; }
+      50% { cx: 700; cy: 200; }
+      62.5% { cx: 550; cy: 250; }
+      75% { cx: 400; cy: 300; }
+      87.5% { cx: 250; cy: 350; }
+      100% { cx: 100; cy: 200; }
+    }
+
+    /* Container login awalnya tertutup */
+    .login-container {
+      background: rgba(15, 20, 25, 0.95);
+      padding: 0;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      height: 70px; /* Tertutup: tinggi kecil */
+      transition: height 0.6s ease, padding 0.6s ease, box-shadow 0.6s ease;
+      cursor: pointer;
+      border: 1px solid rgba(0, 212, 255, 0.5);
+    }
+    .login-container.open {
+      height: auto; /* Terbuka: tinggi penuh */
+      padding: 2.5rem;
+      box-shadow: 0 20px 50px rgba(0, 212, 255, 0.5);
+    }
+
+    /* Ikon tertutup (router ala TKJ) */
+    .closed-icon {
+      font-size: 2.2rem;
+      color: #00d4ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      transition: color 0.3s ease;
+    }
+    .closed-icon:hover {
+      color: #007bff;
+    }
+
+    /* Konten form (tersembunyi saat tertutup) */
+    .form-content {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .login-container.open .form-content {
+      opacity: 1;
+    }
+
+    /* Judul */
+    h2 {
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #e0e0e0;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    }
+
+    /* Input fields dengan efek hover */
+    input {
+      width: 100%;
+      padding: 1rem;
+      margin: 0.7rem 0;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #e0e0e0;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    input:focus {
+      outline: none;
+      border-color: #00d4ff;
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    input::placeholder {
+      color: #a0a0a0;
+    }
+
+    /* Button dengan animasi hover */
+    button {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(45deg, #00d4ff, #007bff);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 212, 255, 0.5);
+    }
+
+    /* Note demo */
+    .note {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #a0a0a0;
+    }
+
+    /* Responsivitas */
+    @media (max-width: 600px) {
+      .login-container {
+        max-width: 90%;
+      }
+      .login-container.open {
+        padding: 2rem;
+      }
+      h2 {
+        font-size: 1.7rem;
+      }
+      input, button {
+        padding: 0.9rem;
+        font-size: 0.95rem;
+      }
+      .tkj-bg svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>Login Admin</h2>
-    <input type="text" id="user" placeholder="Username" />
-    <input type="password" id="pass" placeholder="Password" />
-    <button id="btnLogin">Login</button>
-    <p class="note">Demo: username <b>admin</b> | password <b>tkj123</b></p>
+  <!-- Background animasi jaringan komputer TKJ yang rame dan full (versi sebelum) -->
+  <div class="tkj-bg">
+    <svg viewBox="0 0 1000 600">
+      <!-- Nodes (lebih banyak untuk kesan rame) -->
+      <circle class="node" cx="100" cy="200" r="15" />
+      <circle class="node" cx="200" cy="150" r="12" />
+      <circle class="node" cx="300" cy="100" r="18" />
+      <circle class="node" cx="400" cy="150" r="15" />
+      <circle class="node" cx="500" cy="200" r="12" />
+      <circle class="node" cx="600" cy="250" r="15" />
+      <circle class="node" cx="700" cy="200" r="12" />
+      <circle class="node" cx="800" cy="150" r="18" />
+      <circle class="node" cx="300" cy="300" r="15" />
+      <circle class="node" cx="400" cy="350" r="12" />
+      <circle class="node" cx="500" cy="300" r="15" />
+      <circle class="node" cx="600" cy="350" r="12" />
+      <circle class="node" cx="150" cy="350" r="15" />
+      <circle class="node" cx="750" cy="350" r="12" />
+      <circle class="node" cx="900" cy="250" r="18" />
+      
+      <!-- Connections (curved paths untuk meliuk dan lebih banyak) -->
+      <path class="connection" d="M100,200 Q200,150 300,100" />
+      <path class="connection" d="M300,100 Q400,150 500,200" />
+      <path class="connection" d="M500,200 Q600,250 700,200" />
+      <path class="connection" d="M700,200 Q800,150 900,250" />
+      <path class="connection" d="M300,100 Q300,200 300,300" />
+      <path class="connection" d="M300,300 Q400,350 500,300" />
+      <path class="connection" d="M500,300 Q600,350 700,200" />
+      <path class="connection" d="M100,200 Q150,250 200,150" />
+      <path class="connection" d="M400,150 Q450,200 500,200" />
+      <path class="connection" d="M600,250 Q650,300 750,350" />
+      <path class="connection" d="M150,350 Q250,300 300,300" />
+      <path class="connection" d="M500,300 Q550,350 600,350" />
+      <path class="connection" d="M750,350 Q800,300 900,250" />
+      
+      <!-- Data particles bergerak (7 dengan delay berbeda) -->
+      <circle class="data-particle" cx="100" cy="200" />
+      <circle class="data-particle" cx="300" cy="100" style="animation-delay: 0.5s;" />
+      <circle class="data-particle" cx="500" cy="200" style="animation-delay: 1s;" />
+      <circle class="data-particle" cx="700" cy="200" style="animation-delay: 1.5s;" />
+      <circle class="data-particle" cx="300" cy="300" style="animation-delay: 2s;" />
+      <circle class="data-particle" cx="500" cy="300" style="animation-delay: 2.5s;" />
+      <circle class="data-particle" cx="900" cy="250" style="animation-delay: 0s;" />
+      
+      <!-- Labels -->
+      <text x="100" y="230" text-anchor="middle" fill="#00d4ff" font-size="10">PC1</text>
+      <text x="300" y="130" text-anchor="middle" fill="#00d4ff" font-size="10">Router</text>
+      <text x="500" y="230" text-anchor="middle" fill="#00d4ff" font-size="10">Server</text>
+      <text x="700" y="230" text-anchor="middle" fill="#00d4ff" font-size="10">PC2</text>
+      <text x="300" y="330" text-anchor="middle" fill="#00d4ff" font-size="10">Switch</text>
+      <text x="900" y="280" text-anchor="middle" fill="#00d4ff" font-size="10">Firewall</text>
+    </svg>
   </div>
 
-  <script>
-    document.getElementById('btnLogin').addEventListener('click', () => {
-      const u = document.getElementById('user').value.trim();
-      const p = document.getElementById('pass').value.trim();
-      if (u === 'admin' && p === 'tkj123') {
-        localStorage.setItem('login', 'true');
-        window.location.href = 'dashboard.html';
-      } else {
-        alert('Username atau password salah!');
-      }
-    });
-  </script>
+  <div class="login-container" id="loginContainer">
+    <!-- Ikon tertutup -->
+    <div class="closed-icon" id="closedIcon">🖧</div>
+    
+    <!-- Konten form -->
+    <div class="form-content">
+      <h2>Login Admin</h2>
+      <input type="text" id="user" placeholder="Username" />
+      <input type="password" id="pass" placeholder="Password" />
+      <button id="btnLogin">Login</button>
+      <p class="note">Demo: username <b>admin</b> | password <b>tkj123</b></p>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
 </body>
 </html>

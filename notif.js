@@ -1,13 +1,35 @@
 /* notif.js */
 /* Peringatan: memasukkan BOT_TOKEN pada client-side tidak aman.
-   Hanya gunakan untuk demo lokal. Untuk produksi, buat endpoint server. */
+   Untuk demo lokal ini kami mendukung dua opsi:
+   1) Letakkan token/chat id di file `config.json` (TIDAK disertakan di repo).
+   2) Isi langsung di bawah (tidak direkomendasikan).
+   Untuk produksi buat endpoint server yang menyimpan token aman. */
 
-const BOT_TOKEN = 'MASUKKAN_TOKEN_BOT_ANDA_DI_SINI'; // contoh: '123456789:ABC...'
-const CHAT_ID  = 'MASUKKAN_CHAT_ID_DI_SINI';        // misal: '123456789' atau '-100xxxxxx' untuk grup
+let BOT_TOKEN = '';
+let CHAT_ID = '';
+
+// fallback static values (tidak diset secara default)
+const FALLBACK_BOT_TOKEN = '';
+const FALLBACK_CHAT_ID = '';
+
+async function loadConfig() {
+  // coba load config.json dari root proyek (di-host bersama file statis)
+  try {
+    const resp = await fetch('config.json', { cache: 'no-store' });
+    if (!resp.ok) throw new Error('no-config');
+    const cfg = await resp.json();
+    BOT_TOKEN = cfg.BOT_TOKEN || '';
+    CHAT_ID = cfg.CHAT_ID || '';
+  } catch (e) {
+    // gunakan fallback yang terkomentari atau kosong
+    BOT_TOKEN = FALLBACK_BOT_TOKEN;
+    CHAT_ID = FALLBACK_CHAT_ID;
+  }
+}
 
 async function sendTelegramMessage(message) {
   if (!BOT_TOKEN || !CHAT_ID) {
-    console.warn('BOT_TOKEN atau CHAT_ID belum diset di notif.js');
+    console.warn('BOT_TOKEN atau CHAT_ID belum diset. Tidak mengirim ke Telegram.');
     return null;
   }
   try {
@@ -30,16 +52,27 @@ async function sendTelegramMessage(message) {
   }
 }
 
+// public notif functions
 window.notifPinjam = async function(namaBarang, peminjam, kode) {
   const waktu = new Date().toLocaleString();
   const pesan = `📦 <b>BARANG DIPINJAM</b>\nNama: <b>${namaBarang}</b>\nKode: <b>${kode}</b>\nPeminjam: <b>${peminjam}</b>\nWaktu: ${waktu}`;
   await sendTelegramMessage(pesan);
-  alert('Notifikasi pinjam terkirim ke Telegram (jika token valid).');
+  alert('Notifikasi pinjam dikirim (jika token valid).');
 };
 
 window.notifRusak = async function(namaBarang, keterangan, kode) {
   const waktu = new Date().toLocaleString();
   const pesan = `⚠️ <b>LAPORAN BARANG RUSAK</b>\nNama: <b>${namaBarang}</b>\nKode: <b>${kode}</b>\nKerusakan: ${keterangan}\nWaktu: ${waktu}`;
   await sendTelegramMessage(pesan);
-  alert('Notifikasi rusak terkirim ke Telegram (jika token valid).');
+  alert('Notifikasi rusak dikirim (jika token valid).');
 };
+
+// optional: notifikasi pengembalian
+window.notifKembali = async function(namaBarang, kode) {
+  const waktu = new Date().toLocaleString();
+  const pesan = `✅ <b>BARANG DIKEMBALIKAN</b>\nNama: <b>${namaBarang}</b>\nKode: <b>${kode}</b>\nWaktu: ${waktu}`;
+  await sendTelegramMessage(pesan);
+};
+
+// Load config on script load
+loadConfig();

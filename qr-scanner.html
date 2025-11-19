@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
-<body onload="cekLogin(); initScannerPage();">
+<body onload="initScannerPage();">
   <div class="container">
     <h1>Scan QR Barang</h1>
     <div style="display:flex;gap:8px;justify-content:center;margin-bottom:10px">
@@ -33,81 +33,6 @@
     </div>
   </div>
 
-  <script>
-    // fungsi bantuan agar qr-scanner dapat memanggil onScanSuccess di script.js
-    let html5QrScannerPage;
-    window.initScannerPage = async function() {
-      // inisialisasi Html5Qrcode instance
-      html5QrScannerPage = new Html5Qrcode("reader");
-      try {
-        const devices = await Html5Qrcode.getCameras();
-        const sel = document.getElementById('cameraSelect');
-        sel.innerHTML = '';
-        devices.forEach((d, i) => {
-          const opt = document.createElement('option');
-          opt.value = d.id;
-          opt.text = d.label || `Camera ${i+1}`;
-          sel.appendChild(opt);
-        });
-        // pilih camera default
-        if (devices.length) {
-          startQrCamera(devices[0].id);
-          sel.value = devices[0].id;
-        }
-        sel.onchange = () => {
-          const id = sel.value;
-          switchQrCamera(id);
-        };
-      } catch (err) {
-        // fallback facingMode
-        startQrCamera({ facingMode: "environment" });
-      }
-    };
-
-    function startQrCamera(cameraIdOrConfig) {
-      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-      html5QrScannerPage.start(
-        cameraIdOrConfig,
-        config,
-        (decodedText, decodedResult) => {
-          // panggil fungsi global onScanSuccess jika ada
-          if (typeof window.onScanSuccess === 'function') {
-            window.onScanSuccess(decodedText);
-          } else {
-            // fallback lokal
-            document.getElementById('hasil_kode').innerText = decodedText;
-          }
-        },
-        (error) => {
-          // ignore minor errors
-        }
-      ).catch(e => console.error('Start QR error', e));
-    }
-
-    async function switchQrCamera(newId) {
-      try { await html5QrScannerPage.stop(); } catch(e){}
-      startQrCamera(newId);
-    }
-
-    function stopQrCamera() {
-      if (html5QrScannerPage) {
-        html5QrScannerPage.stop().catch(e => console.warn('Stop error', e));
-      }
-    }
-
-    // tombol di halaman scanner akan memanggil fungsi ini (konfirmasi peminjaman)
-    window.confirmPinjamFromScanner = function() {
-      const kode = document.getElementById('hasil_kode').innerText;
-      if (!kode || kode === '-') { alert('Belum ada hasil scan'); return; }
-      const peminjam = prompt('Masukkan nama peminjam:');
-      if (!peminjam) return;
-      // panggil fungsi global untuk peminjaman (script.js harus menyediakan fungsi ini)
-      if (typeof window.konfirmasiPinjamByKode === 'function') {
-        window.konfirmasiPinjamByKode(kode, peminjam);
-      } else {
-        alert('Fungsi peminjaman tidak tersedia. Kembali ke dashboard.');
-      }
-    };
-  </script>
+  <script src="qr-scanner.js"></script>
 </body>
 </html>
