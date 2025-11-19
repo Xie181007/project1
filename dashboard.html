@@ -1,0 +1,78 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard Inventaris TKJ</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- SheetJS CDN untuk export XLSX -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body onload="cekLogin(); tampilkanData();">
+
+  <div class="container">
+    <h1>Dashboard Inventaris Peralatan TKJ</h1>
+    <button class="logout" onclick="logout()">Logout</button>
+
+    <!-- Statistik ringkas -->
+    <div class="stats">
+      <div class="box">Total Barang: <span id="total">0</span></div>
+      <div class="box">Baik: <span id="baik">0</span></div>
+      <div class="box">Rusak: <span id="rusak">0</span></div>
+      <div class="box">Dipinjam: <span id="pinjam">0</span></div>
+    </div>
+
+    <!-- Form tambah / edit -->
+    <div class="form-container">
+      <h2>Tambah / Edit Peralatan</h2>
+      <form id="form">
+        <input type="text" id="nisn" placeholder="NISN (opsional)" />
+        <input type="text" id="nama" placeholder="Nama Peralatan" required />
+        <input type="text" id="kode" placeholder="Kode / Serial" required />
+        <input type="number" id="jumlah" placeholder="Jumlah" required min="0" />
+        <select id="status">
+          <option value="Baik">Baik</option>
+          <option value="Rusak">Rusak</option>
+          <option value="Dipinjam">Dipinjam</option>
+        </select>
+        <label>Foto Barang (opsional)</label>
+        <input type="file" id="foto" accept="image/*" />
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button type="submit">Simpan</button>
+          <button type="button" onclick="resetForm()">Batal</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="buttons-row">
+      <button onclick="exportCSV()" class="excel-btn">Export CSV</button>
+      <button onclick="exportXLSX()" class="excel-btn">Export XLSX</button>
+      <button onclick="window.location.href='qr-scanner.html'" class="excel-btn">Scan QR</button>
+    </div>
+
+    <!-- Tabel inventaris -->
+    <h2>Daftar Inventaris</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Foto + QR</th>
+          <th>NISN</th>
+          <th>Nama</th>
+          <th>Kode</th>
+          <th>Jumlah</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabel-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Notifikasi (harus diload sebelum script utama karena script utama memanggil fungsi notif) -->
+  <script src="notif.js"></script>
+  <script src="excel.js"></script>
+  <script src="ui-anim.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

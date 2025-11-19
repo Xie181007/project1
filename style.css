@@ -1,0 +1,271 @@
+/* style.css
+   Modern Web3 look: animated gradient background, glowing blobs, glass cards,
+   subtle motion, neat table, accessible contrast.
+*/
+
+/* ---------- Root variables ---------- */
+:root{
+  --bg-dark: #0b1020;
+  --glass-bg: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.08);
+  --muted: rgba(255,255,255,0.75);
+  --accent: #7c5cff;
+  --accent-2: #36e7b8;
+  --accent-3: #ffd36b;
+  --glass-blur: 12px;
+  --card-radius: 14px;
+  --glass-padding: 16px;
+  --shadow-soft: 0 6px 30px rgba(7,10,25,0.6);
+  --glass-outline: 1px solid rgba(255,255,255,0.04);
+  --mono: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
+}
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; }
+html,body { height:100%; }
+body{
+  margin:0;
+  font-family: var(--mono);
+  color: #e8eefc;
+  background: linear-gradient(120deg, rgba(12,16,30,1) 0%, rgba(6,10,22,1) 40%, rgba(2,6,16,1) 100%);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  position:relative;
+}
+
+/* ---------- Animated Gradient & Floating Blobs (pure CSS) ---------- */
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  z-index:0;
+  inset: -20% -20% auto -20%;
+  height:120vh;
+  width:120vw;
+  filter: blur(80px) saturate(120%);
+  transform: translateZ(0);
+  pointer-events:none;
+  opacity:0.95;
+  transition:opacity .6s ease;
+}
+
+body::before{
+  background: radial-gradient(circle at 10% 20%, rgba(124,92,255,0.30), transparent 18%),
+              radial-gradient(circle at 80% 60%, rgba(54,231,184,0.18), transparent 20%),
+              radial-gradient(circle at 50% 80%, rgba(255,211,107,0.10), transparent 20%);
+  animation: floaty 14s infinite linear;
+}
+
+body::after{
+  background: conic-gradient(from 120deg at 50% 50%, rgba(124,92,255,0.04), rgba(54,231,184,0.03), rgba(255,211,107,0.02));
+  mix-blend-mode: overlay;
+  animation: rotatebg 30s linear infinite;
+}
+
+@keyframes floaty{
+  0% { transform: translateY(0) scale(1) rotate(0deg); }
+  50% { transform: translateY(-20px) scale(1.04) rotate(3deg); }
+  100% { transform: translateY(0) scale(1) rotate(0deg); }
+}
+@keyframes rotatebg{
+  from { transform: rotate(0deg) }
+  to { transform: rotate(360deg) }
+}
+
+/* ---------- Center container ---------- */
+.container {
+  width:92%;
+  max-width:1100px;
+  margin:36px auto;
+  position:relative;
+  z-index:2; /* above background */
+  padding:28px;
+}
+
+/* ---------- Header ---------- */
+h1,h2 { margin:6px 0 18px; text-align:center; letter-spacing:0.4px; color:#f6f7ff; }
+h1 { font-size:26px; font-weight:700; text-shadow: 0 6px 22px rgba(0,0,0,0.6); }
+
+/* ---------- Glass Card ---------- */
+.form-container,
+.stats,
+.table-wrap,
+.login-container,
+.form-container,
+.form-container input,
+.form-container select {
+  position:relative;
+}
+
+.form-container{
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border-radius: var(--card-radius);
+  padding: var(--glass-padding);
+  box-shadow: var(--shadow-soft);
+  border: var(--glass-outline);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+  transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s;
+}
+.form-container:hover{ transform: translateY(-6px) scale(1.01); }
+
+/* ---------- Form elements ---------- */
+input, select, textarea {
+  width:100%;
+  padding:12px 14px;
+  margin-top:10px;
+  background: rgba(255,255,255,0.03);
+  border-radius:8px;
+  border: 1px solid rgba(255,255,255,0.04);
+  color: var(--muted);
+  outline:none;
+  transition: box-shadow .15s, transform .12s;
+  font-size:14px;
+}
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 4px 18px rgba(124,92,255,0.12);
+  transform: translateY(-2px);
+  border-color: rgba(124,92,255,0.28);
+  color: #434343;
+}
+
+/* ---------- Buttons ---------- */
+button {
+  appearance:none;
+  display:inline-block;
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+  box-shadow: 0 6px 20px rgba(2,6,16,0.6);
+}
+button:active{ transform: translateY(1px) scale(.997); }
+
+/* primary */
+button:not(.excel-btn):not(.logout):not(.aksi-btn) {
+  background: linear-gradient(90deg, var(--accent), #5ec4ff 120%);
+  color: #071025;
+  box-shadow: 0 8px 30px rgba(124,92,255,0.18), 0 2px 8px rgba(2,6,16,0.6);
+}
+
+/* green excel */
+.excel-btn {
+  background: linear-gradient(90deg, #2fd08b, #28a745);
+  color:#03210f;
+  font-weight:700;
+}
+
+/* logout */
+.logout {
+  background: linear-gradient(90deg,#ff6b6b,#ff3d3d);
+  color: white;
+  float:right;
+  padding:8px 12px;
+  border-radius:10px;
+}
+
+/* small action buttons */
+.aksi-btn { 
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  padding:8px 10px;
+  border-radius:8px;
+  font-weight:700;
+  margin:3px 2px;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+.aksi-btn.edit { background: linear-gradient(90deg,#ffb86b,#ff7b4d); color:#071025; }
+.aksi-btn.hapus { background: linear-gradient(90deg,#ff6b6b,#ff3d3d); color:#fff; }
+.aksi-btn.notif { background: linear-gradient(90deg,#7c5cff,#36e7b8); color:#071025; }
+
+/* ---------- Stats boxes ---------- */
+.stats {
+  display:flex;
+  gap:12px;
+  margin:18px 0;
+  z-index:2;
+}
+.box {
+  flex:1;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  box-shadow: 0 8px 30px rgba(2,6,16,0.5);
+  border: 1px solid rgba(255,255,255,0.03);
+}
+.box span { display:block; font-size:22px; margin-top:8px; font-weight:800; color:#fff; }
+
+/* ---------- Table styling ---------- */
+.table-wrap { overflow:auto; border-radius:12px; padding:6px; }
+table {
+  width:100%;
+  border-collapse:collapse;
+  background:transparent;
+  color: #e7f0ff;
+}
+thead th {
+  text-align:center;
+  padding:12px 10px;
+  font-weight:700;
+  font-size:13px;
+  color:#dbe8ff;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+tbody td {
+  padding:12px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  text-align:center;
+  vertical-align:middle;
+  font-size:14px;
+}
+tbody tr:hover {
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  transform: translateY(-2px);
+  transition: all .18s ease;
+}
+table img { width:64px; height:64px; object-fit:cover; border-radius:8px; border: 1px solid rgba(255,255,255,0.03); }
+
+/* ---------- Login ---------- */
+.login-container {
+  width:360px;
+  margin:70px auto;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  padding:22px;
+  border-radius:12px;
+  box-shadow: var(--shadow-soft);
+  border: var(--glass-outline);
+  text-align:center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px) {
+  .stats { flex-direction:column; }
+  .container { padding:16px; }
+  table img { width:48px; height:48px; }
+  .login-container { width:92%; }
+}
+
+/* ---------- Tiny subtle floating icons (decor) ---------- */
+.decor-dot {
+  position: absolute;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(124,92,255,0.9));
+  mix-blend-mode: overlay;
+  filter: blur(6px);
+  opacity:0.12;
+  z-index:1;
+  pointer-events:none;
+}
+
+/* ---------- Accessibility focus ---------- */
+input:focus, select:focus, button:focus { outline: 3px solid rgba(124,92,255,0.12); outline-offset:2px; }
+
+/* ---------- small helpers ---------- */
+.buttons-row { display:flex; gap:12px; align-items:center; margin:12px 0; }
+.note { color: #cbd6ff; font-size:13px; }

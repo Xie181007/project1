@@ -1,0 +1,113 @@
+<!-- qr-scanner.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scan QR - Inventaris TKJ</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body onload="cekLogin(); initScannerPage();">
+  <div class="container">
+    <h1>Scan QR Barang</h1>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:10px">
+      <button onclick="stopQrCamera(); window.location.href='dashboard.html'" class="excel-btn">Kembali</button>
+      <div>
+        <label for="cameraSelect">Pilih Kamera:</label>
+        <select id="cameraSelect"></select>
+      </div>
+    </div>
+
+    <div id="reader" style="width:360px; margin: 0 auto;"></div>
+
+    <div class="form-container">
+      <h3>Hasil Scan</h3>
+      <p><b>Kode:</b> <span id="hasil_kode">-</span></p>
+      <p><b>Nama:</b> <span id="hasil_nama">-</span></p>
+      <p><b>Status:</b> <span id="hasil_status">-</span></p>
+      <p><b>Jumlah:</b> <span id="hasil_jumlah">-</span></p>
+      <div style="margin-top:8px">
+        <button onclick="confirmPinjamFromScanner()" class="aksi-btn edit">Konfirmasi Peminjaman</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // fungsi bantuan agar qr-scanner dapat memanggil onScanSuccess di script.js
+    let html5QrScannerPage;
+    window.initScannerPage = async function() {
+      // inisialisasi Html5Qrcode instance
+      html5QrScannerPage = new Html5Qrcode("reader");
+      try {
+        const devices = await Html5Qrcode.getCameras();
+        const sel = document.getElementById('cameraSelect');
+        sel.innerHTML = '';
+        devices.forEach((d, i) => {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.text = d.label || `Camera ${i+1}`;
+          sel.appendChild(opt);
+        });
+        // pilih camera default
+        if (devices.length) {
+          startQrCamera(devices[0].id);
+          sel.value = devices[0].id;
+        }
+        sel.onchange = () => {
+          const id = sel.value;
+          switchQrCamera(id);
+        };
+      } catch (err) {
+        // fallback facingMode
+        startQrCamera({ facingMode: "environment" });
+      }
+    };
+
+    function startQrCamera(cameraIdOrConfig) {
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+      html5QrScannerPage.start(
+        cameraIdOrConfig,
+        config,
+        (decodedText, decodedResult) => {
+          // panggil fungsi global onScanSuccess jika ada
+          if (typeof window.onScanSuccess === 'function') {
+            window.onScanSuccess(decodedText);
+          } else {
+            // fallback lokal
+            document.getElementById('hasil_kode').innerText = decodedText;
+          }
+        },
+        (error) => {
+          // ignore minor errors
+        }
+      ).catch(e => console.error('Start QR error', e));
+    }
+
+    async function switchQrCamera(newId) {
+      try { await html5QrScannerPage.stop(); } catch(e){}
+      startQrCamera(newId);
+    }
+
+    function stopQrCamera() {
+      if (html5QrScannerPage) {
+        html5QrScannerPage.stop().catch(e => console.warn('Stop error', e));
+      }
+    }
+
+    // tombol di halaman scanner akan memanggil fungsi ini (konfirmasi peminjaman)
+    window.confirmPinjamFromScanner = function() {
+      const kode = document.getElementById('hasil_kode').innerText;
+      if (!kode || kode === '-') { alert('Belum ada hasil scan'); return; }
+      const peminjam = prompt('Masukkan nama peminjam:');
+      if (!peminjam) return;
+      // panggil fungsi global untuk peminjaman (script.js harus menyediakan fungsi ini)
+      if (typeof window.konfirmasiPinjamByKode === 'function') {
+        window.konfirmasiPinjamByKode(kode, peminjam);
+      } else {
+        alert('Fungsi peminjaman tidak tersedia. Kembali ke dashboard.');
+      }
+    };
+  </script>
+</body>
+</html>
