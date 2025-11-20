@@ -107,17 +107,18 @@
 
     /* Ikon tertutup (router ala TKJ) */
     .closed-icon {
-      font-size: 2.2rem;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
       color: #00d4ff;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100%;
       transition: color 0.3s ease;
+      text-shadow: 0 0 10px rgba(0,212,255,0.6);
     }
-    .closed-icon:hover {
-      color: #007bff;
-    }
+
 
     /* Konten form (tersembunyi saat tertutup) */
     .form-content {
@@ -209,63 +210,9 @@
   </style>
 </head>
 <body>
-  <!-- Background animasi jaringan komputer TKJ yang rame dan full (versi sebelum) -->
-  <div class="tkj-bg">
-    <svg viewBox="0 0 1000 600">
-      <!-- Nodes (lebih banyak untuk kesan rame) -->
-      <circle class="node" cx="100" cy="200" r="15" />
-      <circle class="node" cx="200" cy="150" r="12" />
-      <circle class="node" cx="300" cy="100" r="18" />
-      <circle class="node" cx="400" cy="150" r="15" />
-      <circle class="node" cx="500" cy="200" r="12" />
-      <circle class="node" cx="600" cy="250" r="15" />
-      <circle class="node" cx="700" cy="200" r="12" />
-      <circle class="node" cx="800" cy="150" r="18" />
-      <circle class="node" cx="300" cy="300" r="15" />
-      <circle class="node" cx="400" cy="350" r="12" />
-      <circle class="node" cx="500" cy="300" r="15" />
-      <circle class="node" cx="600" cy="350" r="12" />
-      <circle class="node" cx="150" cy="350" r="15" />
-      <circle class="node" cx="750" cy="350" r="12" />
-      <circle class="node" cx="900" cy="250" r="18" />
-      
-      <!-- Connections (curved paths untuk meliuk dan lebih banyak) -->
-      <path class="connection" d="M100,200 Q200,150 300,100" />
-      <path class="connection" d="M300,100 Q400,150 500,200" />
-      <path class="connection" d="M500,200 Q600,250 700,200" />
-      <path class="connection" d="M700,200 Q800,150 900,250" />
-      <path class="connection" d="M300,100 Q300,200 300,300" />
-      <path class="connection" d="M300,300 Q400,350 500,300" />
-      <path class="connection" d="M500,300 Q600,350 700,200" />
-      <path class="connection" d="M100,200 Q150,250 200,150" />
-      <path class="connection" d="M400,150 Q450,200 500,200" />
-      <path class="connection" d="M600,250 Q650,300 750,350" />
-      <path class="connection" d="M150,350 Q250,300 300,300" />
-      <path class="connection" d="M500,300 Q550,350 600,350" />
-      <path class="connection" d="M750,350 Q800,300 900,250" />
-      
-      <!-- Data particles bergerak (7 dengan delay berbeda) -->
-      <circle class="data-particle" cx="100" cy="200" />
-      <circle class="data-particle" cx="300" cy="100" style="animation-delay: 0.5s;" />
-      <circle class="data-particle" cx="500" cy="200" style="animation-delay: 1s;" />
-      <circle class="data-particle" cx="700" cy="200" style="animation-delay: 1.5s;" />
-      <circle class="data-particle" cx="300" cy="300" style="animation-delay: 2s;" />
-      <circle class="data-particle" cx="500" cy="300" style="animation-delay: 2.5s;" />
-      <circle class="data-particle" cx="900" cy="250" style="animation-delay: 0s;" />
-      
-      <!-- Labels -->
-      <text x="100" y="230" text-anchor="middle" fill="#00d4ff" font-size="10">PC1</text>
-      <text x="300" y="130" text-anchor="middle" fill="#00d4ff" font-size="10">Router</text>
-      <text x="500" y="230" text-anchor="middle" fill="#00d4ff" font-size="10">Server</text>
-      <text x="700" y="230" text-anchor="middle" fill="#00d4ff" font-size="10">PC2</text>
-      <text x="300" y="330" text-anchor="middle" fill="#00d4ff" font-size="10">Switch</text>
-      <text x="900" y="280" text-anchor="middle" fill="#00d4ff" font-size="10">Firewall</text>
-    </svg>
-  </div>
-
   <div class="login-container" id="loginContainer">
     <!-- Ikon tertutup -->
-    <div class="closed-icon" id="closedIcon">🖧</div>
+    <div class="closed-icon" id="closedIcon">LOGIN</div>
     
     <!-- Konten form -->
     <div class="form-content">
@@ -280,3 +227,4 @@
   <script src="login.js"></script>
 </body>
 </html>
+
